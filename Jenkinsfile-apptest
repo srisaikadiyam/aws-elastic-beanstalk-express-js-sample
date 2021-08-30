@@ -1,0 +1,52 @@
+pipeline {
+agent {
+   label 'jenkinsNode'
+}
+
+environment {
+    config = readJSON file: 'config.json'
+	
+	jmeter_Home = "${config.performanceTest.jmeter_Home}"
+	testScriptsPath = "${config.performanceTest.testScriptsPath}"
+	jmxFile = "${config.performanceTest.jmxFile}"
+	jtlFile = "${config.performanceTest.jtlFile}"
+	
+	reportsPath = "${config.projectDetails.reportsPath}"
+	emailToList = "${config.emailIDs.toList}" 
+	emailCCList = "${config.emailIDs.ccList}" 	
+}
+
+stages {
+	stage('PerformanceTests') {
+		steps {
+			dir("${workspace}"){
+				script {
+					sh "mkdir ${workspace}/${reportsPath} -p "
+					sh "${jmeter_Home}/bin/jmeter.sh -Jjmeter.save.saveservice.output_format=xml -n -t ${testScriptsPath}/${jmxFile} -l ${testScriptsPath}/${jtlFile}"
+					perfReport filterRegex: '', showTrendGraphs: true, sourceDataFiles: "${testScriptsPath}/${jtlFile}"
+					sh "sudo cp ${testScriptsPath}/${jtlFile} ${workspace}/${reportsPath}/${jtlFile}"
+				}
+			}
+		}
+    }
+}	
+
+post {
+	always{
+		sh "mkdir /tmp/${reportsPath}/ -p"
+	    sh "mkdir /tmp/${reportsPath}/env.JOB_NAME -p"
+	    sh "mkdir /tmp/${reportsPath}/${env.JOB_NAME}/${env.BUILD_NUMBER} -p"
+		sh "cp ${workspace}/${reportsPath}/  /tmp/${reportsPath}/${env.JOB_NAME}/${env.BUILD_NUMBER} -r"
+		echo 'This build Reports are available on the Location: /tmp/${reportsPath}/${env.JOB_NAME}/${env.BUILD_NUMBER}'
+		
+		emailext (
+			to: "${emailToList}",
+			subject: "JOB " + env.JOB_NAME + ", BUILD " + currentBuild.displayName + " completed with status: " + currentBuild.currentResult,
+			body: '''${SCRIPT, template="groovy-html.template"}''',
+			mimeType: 'text/html',
+			attachLog: true,
+			attachmentsPattern: "${reportsPath}/*"
+		)
+	}
+}
+}

@@ -1,0 +1,95 @@
+{
+	"git_repo": {
+		"URL": "http://ec2-52-34-77-87.us-west-2.compute.amazonaws.com/scm/cicd/pipeline.git",
+		"Cred": "266d2950-f447-4ab5-918b-34f1a562699b",
+		"Branch": "master"
+	},
+	
+	"projectDetails" : {
+		"name": "cicd",
+		"version": "1.0",
+		"reportsPath": "buildReports"
+	},
+	"build": {
+		"language": "Java",
+		"buildTool": "maven",
+		
+		"antBuildFile": "build.xml",
+		"antCompileTarget": "compile",
+		"antUnitTestTarget": "unitTest",
+		
+		"dotNetAppType": "DotNetCore",
+		"dotNetSolutionPath": "SurfReport.csproj"
+	},
+	"unitTestCases": {
+		"skipUnitTestCases": "false",
+		"pythonUnitTestFileLocation": "src/manage.py"
+	},
+	"sonar": {
+		"skipSonarAnalysis": "false",
+		"projectAuthToken": "6bd94cb3-b748-49a5-bc14-3d5556623130",
+		"projectKey": "cicd",
+		"sleepTime": "1"
+	},
+	"zephyr": {
+		"skipZephyrReports": "false",
+		"serverAddress": "http://52.24.144.180/",
+		"projectKey": "3",
+		"releaseKey": "1",
+		"parserTemplateKey": "1",
+		"cycleDuration": "30 days",
+		"cycleKey": "2",
+		"cyclePrefix": "",
+		"createPackage": "true",
+		"resultXmlFilePath": "target/surefire-reports/*.xml"
+	},
+	"docker": {
+		"skipImagePush": "false",
+		"dockerFileLocation": "Dockerfile",
+		"imageName": "cicd",
+		"tagName": "1.0"
+	},
+	"helm": {
+		"skipHelmPush": "false",
+		"chartLocation": "helm"
+	},
+	"accurics": {
+		"skipAccuricsReport": "false",
+		"configFilesLocation": "accuricsConfigFiles",
+		"helmLocation": "helm",
+		"terrafomLocation": "terraform"
+	},
+	"harbor": {
+		"URL": "https://harbor.test.devsecops.cf.unisys-waf.com",
+		"tagURL": "harbor.test.devsecops.cf.unisys-waf.com",
+		"credID": "bd9cc7b4-414b-4f9d-83e3-cfdbafc97abe",
+		"repoName": "cicd"
+	},
+	"trivy": {
+		"skipTrivyScan": "true",
+		"version": "latest",
+		"severity": "HIGH,CRITICAL"
+	},
+	"codeMerge": {
+		"skipCodeMerge": "false",
+		"mergeToBranch": "release"
+	},
+	"emailIDs": {
+		"skipEmailNotification": "false",
+		"toList": "kadiyamsrisai@gmail.com"
+	},
+	"k8sAWS": {
+		"skipConfigurek8s": "true",
+		"jenkinsNodeSpinnaker": "spinnaker",
+		"awsCred": "aws-key",
+		"awsRegion": "us-east-2",
+		"awsIamAuthenticatorURL": "https://amazon-eks.s3.us-west-2.amazonaws.com/1.19.6/2021-01-05/bin/linux/amd64/aws-iam-authenticator",
+		"awsIamAuthenticatorSHA256URL": "https://amazon-eks.s3.us-west-2.amazonaws.com/1.19.6/2021-01-05/bin/linux/amd64/aws-iam-authenticator.sha256"
+	},
+	"performanceTest": {
+		"jmeter_Home": "/home/ubuntu/apache-jmeter-5.4.1",
+		"testScriptsPath" : "appTestScripts",
+		"jmxFile": "Test.jmx",
+		"jtlFile": "report.jtl"
+	}
+}
